@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -190,9 +190,9 @@ canvas{width:100%!important}
 <div id="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">
-      <div class="auth-logo-icon">⚡</div>
+      <div class="auth-logo-icon">âš¡</div>
       <h1>Fitness Tracker</h1>
-      <p>Connecte-toi pour accéder à tes données</p>
+      <p>Connecte-toi pour accÃ©der Ã  tes donnÃ©es</p>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Connexion</button>
@@ -212,16 +212,16 @@ canvas{width:100%!important}
 <!-- MAIN APP -->
 <div id="app">
 <nav class="nav">
-  <button class="nav-btn active" onclick="showPage('workout')">Entraînements</button>
+  <button class="nav-btn active" onclick="showPage('workout')">EntraÃ®nements</button>
   <button class="nav-btn" onclick="showPage('meals')">Repas</button>
-  <button class="nav-btn" onclick="showPage('progress')">Progrès</button>
+  <button class="nav-btn" onclick="showPage('progress')">ProgrÃ¨s</button>
   <button class="nav-btn" onclick="showPage('photos')">Photos</button>
-  <button class="nav-logout" onclick="handleLogout()">Déconnexion</button>
+  <button class="nav-logout" onclick="handleLogout()">DÃ©connexion</button>
 </nav>
 
 <div class="page active" id="page-workout">
   <div class="workout-header">
-    <h2>Séances</h2>
+    <h2>SÃ©ances</h2>
     <button class="btn-primary btn-sm" onclick="openModal()">+ Ajouter</button>
   </div>
   <div class="cat-tabs">
@@ -235,14 +235,14 @@ canvas{width:100%!important}
 
 <div class="page" id="page-meals">
   <div class="meal-day-nav">
-    <button class="meal-day-btn" onclick="changeMealDay(-1)">‹</button>
+    <button class="meal-day-btn" onclick="changeMealDay(-1)">â€¹</button>
     <span class="meal-day-label" id="meal-day-label">Aujourd'hui</span>
-    <button class="meal-day-btn" onclick="changeMealDay(1)">›</button>
+    <button class="meal-day-btn" onclick="changeMealDay(1)">â€º</button>
   </div>
   <div class="meal-summary">
     <div class="meal-summary-card">
       <div class="meal-summary-num" id="meal-count-today">0</div>
-      <div class="meal-summary-label">Repas notés</div>
+      <div class="meal-summary-label">Repas notÃ©s</div>
     </div>
     <div class="meal-summary-card">
       <div class="meal-summary-num" id="meal-streak">0</div>
@@ -258,21 +258,21 @@ canvas{width:100%!important}
     <div class="metrics-grid">
       <div class="metric-card">
         <div class="metric-label">Poids actuel</div>
-        <div class="metric-val" id="cur-weight">—</div>
+        <div class="metric-val" id="cur-weight">â€”</div>
         <div class="metric-delta delta-neg" id="weight-delta"></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Tour de taille</div>
-        <div class="metric-val" id="cur-waist">—</div>
+        <div class="metric-val" id="cur-waist">â€”</div>
         <div class="metric-delta" id="waist-delta"></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Tour de hanches</div>
-        <div class="metric-val" id="cur-hips">—</div>
+        <div class="metric-val" id="cur-hips">â€”</div>
         <div class="metric-delta" id="hips-delta"></div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Séances ce mois</div>
+        <div class="metric-label">SÃ©ances ce mois</div>
         <div class="metric-val" id="sessions-count">0</div>
         <div class="metric-delta delta-pos"></div>
       </div>
@@ -299,17 +299,17 @@ canvas{width:100%!important}
 
 <div class="page" id="page-photos">
   <div class="compare-bar">
-    <p>Comparaison avant / après</p>
+    <p>Comparaison avant / aprÃ¨s</p>
     <div class="compare-slots">
-      <div class="slot-btn" id="slot-a" onclick="document.getElementById('file-a').click()">Sélectionner Avant</div>
-      <div class="slot-btn" id="slot-b" onclick="document.getElementById('file-b').click()">Sélectionner Après</div>
+      <div class="slot-btn" id="slot-a" onclick="document.getElementById('file-a').click()">SÃ©lectionner Avant</div>
+      <div class="slot-btn" id="slot-b" onclick="document.getElementById('file-b').click()">SÃ©lectionner AprÃ¨s</div>
     </div>
     <input type="file" class="file-input" id="file-a" accept="image/*" onchange="setCompare('a',this)">
     <input type="file" class="file-input" id="file-b" accept="image/*" onchange="setCompare('b',this)">
   </div>
   <div id="compare-view" style="display:none;margin-bottom:16px"></div>
   <div class="photo-header">
-    <span style="font-weight:700;font-size:15px">Galerie progrès</span>
+    <span style="font-weight:700;font-size:15px">Galerie progrÃ¨s</span>
     <button class="btn-primary btn-sm" onclick="document.getElementById('file-new').click()">+ Photo</button>
     <input type="file" class="file-input" id="file-new" accept="image/*" onchange="addPhoto(this)">
   </div>
@@ -319,16 +319,16 @@ canvas{width:100%!important}
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-head">
-      <h3>Nouvelle séance</h3>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3>Nouvelle sÃ©ance</h3>
+      <button class="modal-close" onclick="closeModal()">âœ•</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Nom de la séance</label>
-        <input type="text" id="f-name" placeholder="Ex: Jambes — Squat focus">
+        <label>Nom de la sÃ©ance</label>
+        <input type="text" id="f-name" placeholder="Ex: Jambes â€” Squat focus">
       </div>
       <div class="form-group">
-        <label>Catégorie</label>
+        <label>CatÃ©gorie</label>
         <select id="f-cat">
           <option value="legs">Jambes</option>
           <option value="arms">Bras</option>
@@ -344,7 +344,7 @@ canvas{width:100%!important}
         <div class="exercises-builder" id="ex-builder"></div>
         <button class="add-ex-btn" onclick="addExRow()">+ Ajouter un exercice</button>
       </div>
-      <button class="btn-save" id="save-workout-btn" onclick="saveWorkout()">Enregistrer la séance</button>
+      <button class="btn-save" id="save-workout-btn" onclick="saveWorkout()">Enregistrer la sÃ©ance</button>
     </div>
   </div>
 </div>
@@ -353,13 +353,13 @@ canvas{width:100%!important}
   <div class="modal">
     <div class="modal-head">
       <h3 id="meal-modal-title">Ajouter un repas</h3>
-      <button class="modal-close" onclick="closeMealModal()">✕</button>
+      <button class="modal-close" onclick="closeMealModal()">âœ•</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
         <label>Photo</label>
         <div class="photo-pick-area" id="meal-photo-area" onclick="document.getElementById('meal-photo-input').click()">
-          <span id="meal-photo-placeholder" style="font-size:24px">📷</span>
+          <span id="meal-photo-placeholder" style="font-size:24px">ðŸ“·</span>
           <span id="meal-photo-text" style="font-size:12px;color:var(--text2);font-weight:600">Ajouter une photo</span>
           <img id="meal-photo-preview" class="photo-pick-preview" style="display:none">
         </div>
@@ -367,7 +367,7 @@ canvas{width:100%!important}
       </div>
       <div class="form-group">
         <label>Note</label>
-        <textarea id="meal-note" placeholder="Ex: Poulet grillé, riz et brocolis"></textarea>
+        <textarea id="meal-note" placeholder="Ex: Poulet grillÃ©, riz et brocolis"></textarea>
       </div>
       <button class="btn-save" id="save-meal-btn" onclick="saveMeal()">Enregistrer le repas</button>
     </div>
@@ -379,15 +379,15 @@ canvas{width:100%!important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── SUPABASE CONFIG ───────────────────────────────
+// â”€â”€ SUPABASE CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SUPABASE_URL = "https://yuxcobevphawhbhmlvca.supabase.co";
-const SUPABASE_KEY = "sb_publishable_dR_-4R5lMsFmo18bYEdjEQ_p-Y2Z-FdUAsn";
+const SUPABASE_KEY = "sb_publishable_dR_-4R5lMsFmo18bYEdjEQ_p-Y2Z-Fd";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let authMode = 'login';
 
-// ── AUTH ──────────────────────────────────────────
+// â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function switchAuthTab(mode) {
   authMode = mode;
   document.getElementById('tab-login').classList.toggle('active', mode==='login');
@@ -424,7 +424,7 @@ async function handleAuth() {
       return;
     }
     if(data.user && !data.session) {
-      msg.innerHTML = '<div class="auth-msg success">Compte créé ! Vérifie ta boîte mail pour confirmer.</div>';
+      msg.innerHTML = '<div class="auth-msg success">Compte crÃ©Ã© ! VÃ©rifie ta boÃ®te mail pour confirmer.</div>';
       btn.disabled = false;
     } else if(data.session) {
       onLoginSuccess(data.user);
@@ -451,13 +451,13 @@ sb.auth.getSession().then(({ data }) => {
   if(data.session) onLoginSuccess(data.session.user);
 });
 
-// ── APP STATE ─────────────────────────────────────
+// â”€â”€ APP STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let workoutsCache = [];
 let measurementsCache = [];
 let photosCache = [];
 let mealsCache = [];
 
-const catIcons = {legs:"🦵", arms:"💪", full:"⚡"};
+const catIcons = {legs:"ðŸ¦µ", arms:"ðŸ’ª", full:"âš¡"};
 const catNames = {legs:"Jambes", arms:"Bras", full:"Full Body"};
 const catColors = {legs:"var(--legs)", arms:"var(--arms)", full:"var(--full)"};
 let activeCat = "all";
@@ -480,7 +480,7 @@ function showPage(p) {
   if(p==='meals') renderMeals();
 }
 
-// ── WORKOUTS (Supabase) ───────────────────────────
+// â”€â”€ WORKOUTS (Supabase) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadWorkouts() {
   const { data: workouts, error } = await sb.from('workouts').select('*').order('date', {ascending:false});
   if(error) { console.error(error); alert('Erreur chargement s?ances : ' + error.message); return; }
@@ -498,7 +498,7 @@ function renderWorkouts() {
   const list = document.getElementById('sessions-list');
   const filtered = activeCat === 'all' ? workoutsCache : workoutsCache.filter(w=>w.cat===activeCat);
   if(!filtered.length){
-    list.innerHTML = `<div class="empty-state"><div>🏋️</div><p>Aucune séance ${activeCat==='all'?'':'dans cette catégorie'}. Ajoute ta première !</p></div>`;
+    list.innerHTML = `<div class="empty-state"><div>ðŸ‹ï¸</div><p>Aucune sÃ©ance ${activeCat==='all'?'':'dans cette catÃ©gorie'}. Ajoute ta premiÃ¨re !</p></div>`;
     return;
   }
   list.innerHTML = filtered.map(w=>`
@@ -507,10 +507,10 @@ function renderWorkouts() {
         <div class="cat-dot" style="background:${catColors[w.cat]};color:${catColors[w.cat]}"></div>
         <div class="session-info">
           <div class="session-name">${w.name}</div>
-          <div class="session-meta">${fmtDate(w.date)} · ${w.exercises.length} exercice${w.exercises.length>1?'s':''}</div>
+          <div class="session-meta">${fmtDate(w.date)} Â· ${w.exercises.length} exercice${w.exercises.length>1?'s':''}</div>
         </div>
         <span class="session-badge badge-${w.cat}">${catNames[w.cat]}</span>
-        <span class="session-arrow" id="arr-${w.id}">›</span>
+        <span class="session-arrow" id="arr-${w.id}">â€º</span>
       </div>
       <div class="session-detail" id="det-${w.id}">
         ${w.exercises.map(e=>`
@@ -518,9 +518,9 @@ function renderWorkouts() {
             <div class="ex-icon">${catIcons[w.cat]}</div>
             <div>
               <div class="ex-name">${e.name}</div>
-              <div class="ex-machine">📍 ${e.machine||'—'}</div>
+              <div class="ex-machine">ðŸ“ ${e.machine||'â€”'}</div>
             </div>
-            <div class="ex-sets">${e.sets}×${e.reps} — ${e.weight}</div>
+            <div class="ex-sets">${e.sets}Ã—${e.reps} â€” ${e.weight}</div>
           </div>`).join('')}
       </div>
     </div>`).join('');
@@ -543,7 +543,7 @@ function filterCat(cat, btn) {
 
 function fmtDate(d) {
   const [y,m,day] = d.split('-');
-  const months = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
+  const months = ['jan','fÃ©v','mar','avr','mai','juin','juil','aoÃ»','sep','oct','nov','dÃ©c'];
   return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
 }
 
@@ -564,10 +564,10 @@ function addExRow() {
   row.innerHTML = `
     <div class="ex-row-top">
       <input type="text" placeholder="Exercice" id="ex-name-${exCount}">
-      <input type="text" placeholder="Machine / Matériel" id="ex-machine-${exCount}">
+      <input type="text" placeholder="Machine / MatÃ©riel" id="ex-machine-${exCount}">
     </div>
     <div class="ex-row-bot">
-      <input type="number" placeholder="Séries" id="ex-sets-${exCount}">
+      <input type="number" placeholder="SÃ©ries" id="ex-sets-${exCount}">
       <input type="text" placeholder="Reps" id="ex-reps-${exCount}">
       <input type="text" placeholder="Charge" id="ex-weight-${exCount}">
     </div>`;
@@ -612,12 +612,12 @@ async function saveWorkout() {
   updateMetrics();
 }
 
-// ?? MEALS (Supabase) ──────────────────────────────
+// ?? MEALS (Supabase) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const mealTypes = [
-  {key:'petit', name:'Petit-déjeuner', icon:'🥐', color:'var(--meal-petit)'},
-  {key:'dej', name:'Déjeuner', icon:'🍲', color:'var(--meal-dej)'},
-  {key:'diner', name:'Dîner', icon:'🍽️', color:'var(--meal-diner)'},
-  {key:'snack', name:'Collation', icon:'🍎', color:'var(--meal-snack)'}
+  {key:'petit', name:'Petit-dÃ©jeuner', icon:'ðŸ¥', color:'var(--meal-petit)'},
+  {key:'dej', name:'DÃ©jeuner', icon:'ðŸ²', color:'var(--meal-dej)'},
+  {key:'diner', name:'DÃ®ner', icon:'ðŸ½ï¸', color:'var(--meal-diner)'},
+  {key:'snack', name:'Collation', icon:'ðŸŽ', color:'var(--meal-snack)'}
 ];
 let mealDayOffset = 0;
 let currentMealType = null;
@@ -681,13 +681,13 @@ function renderMeals() {
       <div class="meal-entries">
         ${entries.length ? entries.map(e=>`
           <div class="meal-entry">
-            ${e.photo_url ? `<img class="meal-entry-photo" src="${e.photo_url}">` : `<div class="meal-entry-photo-empty">🍴</div>`}
+            ${e.photo_url ? `<img class="meal-entry-photo" src="${e.photo_url}">` : `<div class="meal-entry-photo-empty">ðŸ´</div>`}
             <div class="meal-entry-body">
               <div class="meal-entry-note">${e.note||'Sans note'}</div>
               <div class="meal-entry-time">${e.time||''}</div>
             </div>
-            <button class="meal-entry-del" onclick="deleteMeal('${e.id}')">✕</button>
-          </div>`).join('') : `<div class="meal-empty">Aucun repas noté</div>`}
+            <button class="meal-entry-del" onclick="deleteMeal('${e.id}')">âœ•</button>
+          </div>`).join('') : `<div class="meal-empty">Aucun repas notÃ©</div>`}
       </div>
     </div>`;
   }).join('');
@@ -697,7 +697,7 @@ function openMealModal(typeKey) {
   currentMealType = typeKey;
   mealPhotoData = null;
   const t = mealTypes.find(x=>x.key===typeKey);
-  document.getElementById('meal-modal-title').textContent = 'Ajouter — '+t.name;
+  document.getElementById('meal-modal-title').textContent = 'Ajouter â€” '+t.name;
   document.getElementById('meal-note').value = '';
   document.getElementById('meal-photo-preview').style.display = 'none';
   document.getElementById('meal-photo-placeholder').style.display = 'block';
@@ -748,7 +748,7 @@ async function deleteMeal(id) {
   await loadMeals();
 }
 
-// ── MEASUREMENTS (Supabase) ───────────────────────
+// â”€â”€ MEASUREMENTS (Supabase) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadMeasurements() {
   const { data: measurements, error } = await sb.from('measurements').select('*').order('date', {ascending:true});
   if(error) { console.error(error); return; }
@@ -768,7 +768,7 @@ function updateMetrics() {
       const dwa = (last.waist-prev.waist).toFixed(1);
       const dh = (last.hips-prev.hips).toFixed(1);
       const wd=document.getElementById('weight-delta');
-      wd.textContent=(dw>0?'+':'')+dw+'kg vs précédent';
+      wd.textContent=(dw>0?'+':'')+dw+'kg vs prÃ©cÃ©dent';
       wd.className='metric-delta '+(dw<=0?'delta-pos':'delta-neg');
       const wad=document.getElementById('waist-delta');
       wad.textContent=(dwa>0?'+':'')+dwa+'cm';
@@ -869,7 +869,7 @@ async function addEntry() {
   renderChart();
 }
 
-// ── PHOTOS (Supabase) ──────────────────────────────
+// â”€â”€ PHOTOS (Supabase) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadPhotos() {
   const { data: photos, error } = await sb.from('photos').select('*').order('created_at', {ascending:false});
   if(error) { console.error(error); alert('Erreur chargement photos : ' + error.message); return; }
@@ -904,7 +904,7 @@ function setCompare(slot, input) {
   const reader=new FileReader();
   reader.onload=e=>{
     if(slot==='a') compareA=e.target.result; else compareB=e.target.result;
-    document.getElementById('slot-'+slot).textContent=slot==='a'?'✓ Avant sélectionné':'✓ Après sélectionné';
+    document.getElementById('slot-'+slot).textContent=slot==='a'?'âœ“ Avant sÃ©lectionnÃ©':'âœ“ AprÃ¨s sÃ©lectionnÃ©';
     document.getElementById('slot-'+slot).style.borderColor='var(--green)';
     document.getElementById('slot-'+slot).style.color='var(--green)';
     if(compareA&&compareB){
@@ -914,7 +914,7 @@ function setCompare(slot, input) {
           <div style="position:relative"><img src="${compareA}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block">
             <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.7);padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:#fff">AVANT</div></div>
           <div style="position:relative"><img src="${compareB}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block">
-            <div style="position:absolute;bottom:6px;right:6px;background:var(--grad1);padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:#fff">APRÈS</div></div>
+            <div style="position:absolute;bottom:6px;right:6px;background:var(--grad1);padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:#fff">APRÃˆS</div></div>
         </div>`;
     }
   };
@@ -925,12 +925,12 @@ function setCompare(slot, input) {
 function renderPhotos() {
   const grid = document.getElementById('photos-grid');
   if(!photosCache.length){
-    grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>`;
+    grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta premiÃ¨re photo de progression</div>`;
     return;
   }
   grid.innerHTML=photosCache.map(p=>`
     <div class="photo-card">
-      <img class="photo-img" src="${p.photo_url || p.src}" alt="Photo progrès">
+      <img class="photo-img" src="${p.photo_url || p.src}" alt="Photo progrÃ¨s">
       <div class="photo-meta">
         <div class="photo-date">${p.date || new Date(p.taken_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</div>
         <div class="photo-label">${p.label||''}</div>
@@ -940,3 +940,4 @@ function renderPhotos() {
 </script>
 </body>
 </html>
+
