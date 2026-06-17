@@ -1,5 +1,9 @@
-
 <!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Tracker</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -14,26 +18,47 @@
   --legs:#FF5E9C;--arms:#3FA9FF;--full:#A85CFF;
   --meal-petit:#FFB23F;--meal-dej:#22D88F;--meal-diner:#3FA9FF;--meal-snack:#A85CFF;
 }
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px;min-height:400px;overflow-x:hidden}
+html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px;min-height:100vh}
 
-/* NAV */
-.nav{display:flex;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--border);overflow-x:auto}
+/* AUTH SCREEN */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-box{width:100%;max-width:360px}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo-icon{font-size:40px;margin-bottom:8px}
+.auth-logo h1{font-size:22px;font-weight:800;background:var(--grad1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.auth-logo p{color:var(--text2);font-size:13px;margin-top:4px}
+.auth-tabs{display:flex;background:var(--bg2);border-radius:20px;padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;text-align:center;padding:8px;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text2);border:none;background:none}
+.auth-tab.active{background:var(--grad1);color:#fff}
+.auth-field{margin-bottom:12px}
+.auth-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;color:var(--text);font-size:14px;outline:none}
+.auth-field input:focus{border-color:var(--accent)}
+.auth-submit{width:100%;padding:13px;background:var(--grad1);color:#fff;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:14px;cursor:pointer;margin-top:6px;box-shadow:0 4px 14px rgba(255,94,156,.3)}
+.auth-submit:disabled{opacity:.6;cursor:default}
+.auth-msg{font-size:12px;margin-top:10px;text-align:center;padding:8px;border-radius:8px}
+.auth-msg.error{background:rgba(255,94,156,.15);color:var(--accent)}
+.auth-msg.success{background:rgba(34,216,143,.15);color:var(--green)}
+#app{display:none}
+
+*{box-sizing:border-box}
+.nav{display:flex;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--border);overflow-x:auto;align-items:center}
 .nav-btn{padding:8px 12px;border:none;background:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all .2s;white-space:nowrap}
 .nav-btn.active{background:var(--bg2);color:var(--text)}
 .nav-btn.active::after{content:'';display:block;height:3px;border-radius:3px;margin-top:6px;background:var(--grad1)}
 .nav-btn:hover:not(.active){color:var(--text)}
+.nav-logout{margin-left:auto;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:6px 10px;white-space:nowrap}
+.nav-logout:hover{color:var(--accent)}
 
-/* PAGES */
 .page{display:none;padding:16px;animation:fadein .25s ease}
 .page.active{display:block}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* SHARED */
 .workout-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .workout-header h2{font-size:19px;font-weight:700}
 .btn-primary{background:var(--grad1);color:#fff;border:none;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:transform .15s,opacity .2s;box-shadow:0 4px 14px rgba(255,94,156,.35)}
 .btn-primary:hover{transform:translateY(-1px);opacity:.92}
 .btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5}
 .btn-sm{padding:7px 14px;font-size:12px}
 .cat-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .cat-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--text2)}
@@ -64,7 +89,6 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .ex-machine{color:var(--text2);font-size:12px;margin-top:2px}
 .ex-sets{font-size:12px;color:var(--accent2);font-weight:700;margin-left:auto;white-space:nowrap}
 
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,6,26,.8);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
 .modal{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);width:100%;max-width:420px;max-height:80vh;overflow-y:auto}
@@ -82,12 +106,13 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .ex-row{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;display:flex;flex-direction:column;gap:8px}
 .ex-row-top{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ex-row-bot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ex-row input{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none}
 .add-ex-btn{background:none;border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:9px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .add-ex-btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn-save{width:100%;padding:12px;background:var(--grad1);color:#fff;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 14px rgba(255,94,156,.3)}
 .btn-save:hover{opacity:.9}
+.btn-save:disabled{opacity:.5}
 
-/* PROGRESS PAGE */
 .progress-section{margin-bottom:24px}
 .section-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .section-title::before{content:'';width:4px;height:16px;background:var(--grad1);border-radius:2px;display:inline-block}
@@ -110,7 +135,6 @@ canvas{width:100%!important}
 .btn-add-entry{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s;width:100%}
 .btn-add-entry:hover{background:var(--bg4)}
 
-/* PHOTOS PAGE */
 .photo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .photos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .photo-card{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
@@ -125,7 +149,6 @@ canvas{width:100%!important}
 .slot-btn:hover{border-color:var(--accent);color:var(--accent)}
 .file-input{display:none}
 
-/* MEALS PAGE */
 .meal-day-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;background:var(--bg2);border-radius:var(--radius);padding:10px 14px;border:1px solid var(--border)}
 .meal-day-btn{background:var(--bg3);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
 .meal-day-btn:hover{background:var(--bg4)}
@@ -155,20 +178,47 @@ canvas{width:100%!important}
 .photo-pick-area:hover{border-color:var(--accent)}
 .photo-pick-preview{width:100%;max-height:180px;object-fit:cover;border-radius:var(--radius-sm)}
 
-/* Empty state */
 .empty-state{text-align:center;padding:32px 16px;color:var(--text2)}
 .empty-state div{font-size:30px;margin-bottom:8px}
 .empty-state p{font-size:13px}
+.loading-state{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px}
 </style>
+</head>
+<body>
 
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">⚡</div>
+      <h1>Fitness Tracker</h1>
+      <p>Connecte-toi pour accéder à tes données</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Connexion</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Inscription</button>
+    </div>
+    <div class="auth-field">
+      <input type="email" id="auth-email" placeholder="Adresse email" autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
+    </div>
+    <button class="auth-submit" id="auth-submit-btn" onclick="handleAuth()">Se connecter</button>
+    <div id="auth-msg"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('workout')">Entraînements</button>
   <button class="nav-btn" onclick="showPage('meals')">Repas</button>
   <button class="nav-btn" onclick="showPage('progress')">Progrès</button>
   <button class="nav-btn" onclick="showPage('photos')">Photos</button>
+  <button class="nav-logout" onclick="handleLogout()">Déconnexion</button>
 </nav>
 
-<!-- WORKOUT PAGE -->
 <div class="page active" id="page-workout">
   <div class="workout-header">
     <h2>Séances</h2>
@@ -180,10 +230,9 @@ canvas{width:100%!important}
     <button class="cat-btn" data-cat="arms" onclick="filterCat('arms',this)" style="border-color:var(--arms);color:var(--arms)">Bras</button>
     <button class="cat-btn" data-cat="full" onclick="filterCat('full',this)" style="border-color:var(--full);color:var(--full)">Full Body</button>
   </div>
-  <div class="sessions-list" id="sessions-list"></div>
+  <div class="sessions-list" id="sessions-list"><div class="loading-state">Chargement...</div></div>
 </div>
 
-<!-- MEALS PAGE -->
 <div class="page" id="page-meals">
   <div class="meal-day-nav">
     <button class="meal-day-btn" onclick="changeMealDay(-1)">‹</button>
@@ -203,7 +252,6 @@ canvas{width:100%!important}
   <div class="meal-types-grid" id="meal-types-grid"></div>
 </div>
 
-<!-- PROGRESS PAGE -->
 <div class="page" id="page-progress">
   <div class="progress-section">
     <div class="section-title">Vue d'ensemble</div>
@@ -249,7 +297,6 @@ canvas{width:100%!important}
   </div>
 </div>
 
-<!-- PHOTOS PAGE -->
 <div class="page" id="page-photos">
   <div class="compare-bar">
     <p>Comparaison avant / après</p>
@@ -266,12 +313,9 @@ canvas{width:100%!important}
     <button class="btn-primary btn-sm" onclick="document.getElementById('file-new').click()">+ Photo</button>
     <input type="file" class="file-input" id="file-new" accept="image/*" onchange="addPhoto(this)">
   </div>
-  <div class="photos-grid" id="photos-grid">
-    <div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>
-  </div>
+  <div class="photos-grid" id="photos-grid"><div class="loading-state" style="grid-column:1/-1">Chargement...</div></div>
 </div>
 
-<!-- MODAL ADD WORKOUT -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-head">
@@ -300,12 +344,11 @@ canvas{width:100%!important}
         <div class="exercises-builder" id="ex-builder"></div>
         <button class="add-ex-btn" onclick="addExRow()">+ Ajouter un exercice</button>
       </div>
-      <button class="btn-save" onclick="saveWorkout()">Enregistrer la séance</button>
+      <button class="btn-save" id="save-workout-btn" onclick="saveWorkout()">Enregistrer la séance</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL ADD MEAL -->
 <div class="modal-overlay" id="meal-modal">
   <div class="modal">
     <div class="modal-head">
@@ -326,42 +369,93 @@ canvas{width:100%!important}
         <label>Note</label>
         <textarea id="meal-note" placeholder="Ex: Poulet grillé, riz et brocolis"></textarea>
       </div>
-      <button class="btn-save" onclick="saveMeal()">Enregistrer le repas</button>
+      <button class="btn-save" id="save-meal-btn" onclick="saveMeal()">Enregistrer le repas</button>
     </div>
   </div>
 </div>
 
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-let data = {
-  workouts: [
-    {id:1, name:"Squat & Presse", cat:"legs", date:"2025-06-03", exercises:[
-      {name:"Squat barre", machine:"Rack squat", sets:4, reps:"10", weight:"60kg"},
-      {name:"Presse à cuisses", machine:"Leg press", sets:3, reps:"12", weight:"120kg"},
-      {name:"Leg curl couché", machine:"Machine leg curl", sets:3, reps:"15", weight:"35kg"}
-    ]},
-    {id:2, name:"Bras & Épaules", cat:"arms", date:"2025-06-05", exercises:[
-      {name:"Curl barre EZ", machine:"Barre EZ", sets:4, reps:"12", weight:"20kg"},
-      {name:"Extensions triceps", machine:"Poulie haute", sets:3, reps:"15", weight:"25kg"},
-      {name:"Élévations latérales", machine:"Haltères", sets:3, reps:"12", weight:"8kg"}
-    ]},
-    {id:3, name:"Full Body", cat:"full", date:"2025-06-07", exercises:[
-      {name:"Deadlift", machine:"Barre olympique", sets:4, reps:"6", weight:"80kg"},
-      {name:"Développé couché", machine:"Banc plat", sets:3, reps:"10", weight:"55kg"},
-      {name:"Tractions", machine:"Barre fixe", sets:3, reps:"8", weight:"Poids corps"}
-    ]}
-  ],
-  measurements: [
-    {date:"2025-04-01", weight:68.5, waist:74, hips:97},
-    {date:"2025-04-15", weight:67.8, waist:73, hips:96},
-    {date:"2025-05-01", weight:67.2, waist:72, hips:95.5},
-    {date:"2025-05-15", weight:66.5, waist:71, hips:95},
-    {date:"2025-06-01", weight:65.9, waist:70, hips:94},
-    {date:"2025-06-07", weight:65.4, waist:69.5, hips:93.5}
-  ],
-  photos: [],
-  meals: []
-};
+// ── SUPABASE CONFIG ───────────────────────────────
+const SUPABASE_URL = "https://yuxcobevphawhbhmlvca.supabase.co";
+const SUPABASE_KEY = "sb_publishable_dR_-4R5lMsFmo18bYEdjEQ_p-Y2Z-FdUAsn";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let authMode = 'login';
+
+// ── AUTH ──────────────────────────────────────────
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode==='login');
+  document.getElementById('tab-signup').classList.toggle('active', mode==='signup');
+  document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Se connecter' : "S'inscrire";
+  document.getElementById('auth-msg').innerHTML = '';
+}
+
+async function handleAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const msg = document.getElementById('auth-msg');
+  const btn = document.getElementById('auth-submit-btn');
+  if(!email || !password) {
+    msg.innerHTML = '<div class="auth-msg error">Remplis email et mot de passe</div>';
+    return;
+  }
+  btn.disabled = true;
+  msg.innerHTML = '';
+
+  if(authMode === 'login') {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error) {
+      msg.innerHTML = `<div class="auth-msg error">${error.message}</div>`;
+      btn.disabled = false;
+      return;
+    }
+    onLoginSuccess(data.user);
+  } else {
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if(error) {
+      msg.innerHTML = `<div class="auth-msg error">${error.message}</div>`;
+      btn.disabled = false;
+      return;
+    }
+    if(data.user && !data.session) {
+      msg.innerHTML = '<div class="auth-msg success">Compte créé ! Vérifie ta boîte mail pour confirmer.</div>';
+      btn.disabled = false;
+    } else if(data.session) {
+      onLoginSuccess(data.user);
+    }
+  }
+}
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+function onLoginSuccess(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
+
+// Check existing session on load
+sb.auth.getSession().then(({ data }) => {
+  if(data.session) onLoginSuccess(data.session.user);
+});
+
+// ── APP STATE ─────────────────────────────────────
+let workoutsCache = [];
+let measurementsCache = [];
+let photosCache = [];
+let mealsCache = [];
 
 const catIcons = {legs:"🦵", arms:"💪", full:"⚡"};
 const catNames = {legs:"Jambes", arms:"Bras", full:"Full Body"};
@@ -370,6 +464,12 @@ let activeCat = "all";
 let activeChart = "weight";
 let chartInst = null;
 let exCount = 0;
+
+async function initApp() {
+  await Promise.all([loadWorkouts(), loadMeasurements(), loadPhotos(), loadMeals()]);
+  updateMetrics();
+  renderChart();
+}
 
 function showPage(p) {
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
@@ -380,16 +480,30 @@ function showPage(p) {
   if(p==='meals') renderMeals();
 }
 
+// ── WORKOUTS (Supabase) ───────────────────────────
+async function loadWorkouts() {
+  const { data: workouts, error } = await sb.from('workouts').select('*').order('date', {ascending:false});
+  if(error) { console.error(error); alert('Erreur chargement s?ances : ' + error.message); return; }
+  workoutsCache = (workouts || []).map(w => ({
+    id: w.id,
+    name: w.name,
+    cat: w.cat,
+    date: w.date,
+    exercises: Array.isArray(w.exercises) ? w.exercises : []
+  }));
+  renderWorkouts();
+}
+
 function renderWorkouts() {
   const list = document.getElementById('sessions-list');
-  const filtered = activeCat === 'all' ? data.workouts : data.workouts.filter(w=>w.cat===activeCat);
+  const filtered = activeCat === 'all' ? workoutsCache : workoutsCache.filter(w=>w.cat===activeCat);
   if(!filtered.length){
     list.innerHTML = `<div class="empty-state"><div>🏋️</div><p>Aucune séance ${activeCat==='all'?'':'dans cette catégorie'}. Ajoute ta première !</p></div>`;
     return;
   }
   list.innerHTML = filtered.map(w=>`
     <div class="session-card" id="card-${w.id}">
-      <div class="session-head" onclick="toggleDetail(${w.id})">
+      <div class="session-head" onclick="toggleDetail('${w.id}')">
         <div class="cat-dot" style="background:${catColors[w.cat]};color:${catColors[w.cat]}"></div>
         <div class="session-info">
           <div class="session-name">${w.name}</div>
@@ -404,7 +518,7 @@ function renderWorkouts() {
             <div class="ex-icon">${catIcons[w.cat]}</div>
             <div>
               <div class="ex-name">${e.name}</div>
-              <div class="ex-machine">📍 ${e.machine}</div>
+              <div class="ex-machine">📍 ${e.machine||'—'}</div>
             </div>
             <div class="ex-sets">${e.sets}×${e.reps} — ${e.weight}</div>
           </div>`).join('')}
@@ -449,18 +563,18 @@ function addExRow() {
   row.id = 'ex-'+exCount;
   row.innerHTML = `
     <div class="ex-row-top">
-      <input type="text" placeholder="Exercice" id="ex-name-${exCount}" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none">
-      <input type="text" placeholder="Machine / Matériel" id="ex-machine-${exCount}" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none">
+      <input type="text" placeholder="Exercice" id="ex-name-${exCount}">
+      <input type="text" placeholder="Machine / Matériel" id="ex-machine-${exCount}">
     </div>
     <div class="ex-row-bot">
-      <input type="number" placeholder="Séries" id="ex-sets-${exCount}" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none">
-      <input type="text" placeholder="Reps" id="ex-reps-${exCount}" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none">
-      <input type="text" placeholder="Charge" id="ex-weight-${exCount}" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;outline:none">
+      <input type="number" placeholder="Séries" id="ex-sets-${exCount}">
+      <input type="text" placeholder="Reps" id="ex-reps-${exCount}">
+      <input type="text" placeholder="Charge" id="ex-weight-${exCount}">
     </div>`;
   document.getElementById('ex-builder').appendChild(row);
 }
 
-function saveWorkout() {
+async function saveWorkout() {
   const name = document.getElementById('f-name').value.trim();
   if(!name) { document.getElementById('f-name').focus(); return; }
   const cat = document.getElementById('f-cat').value;
@@ -472,18 +586,33 @@ function saveWorkout() {
     const v = n.value.trim();
     if(v) exercises.push({
       name:v,
-      machine:document.getElementById('ex-machine-'+i).value||'—',
+      machine:document.getElementById('ex-machine-'+i).value||'?',
       sets:parseInt(document.getElementById('ex-sets-'+i).value)||3,
       reps:document.getElementById('ex-reps-'+i).value||'10',
-      weight:document.getElementById('ex-weight-'+i).value||'—'
+      weight:document.getElementById('ex-weight-'+i).value||'?'
     });
   }
-  data.workouts.unshift({id:Date.now(), name, cat, date, exercises: exercises.length?exercises:[{name:'Exercice',machine:'—',sets:3,reps:'10',weight:'—'}]});
+  const finalExercises = exercises.length?exercises:[{name:'Exercice',machine:'?',sets:3,reps:'10',weight:'?'}];
+
+  const btn = document.getElementById('save-workout-btn');
+  btn.disabled = true;
+
+  const { error } = await sb.from('workouts').insert({
+    user_id: currentUser.id,
+    name,
+    cat,
+    date,
+    exercises: finalExercises
+  });
+
+  btn.disabled = false;
+  if(error) { console.error(error); alert('Erreur sauvegarde s?ance : ' + error.message); return; }
   closeModal();
-  renderWorkouts();
+  await loadWorkouts();
   updateMetrics();
 }
 
+// ?? MEALS (Supabase) ──────────────────────────────
 const mealTypes = [
   {key:'petit', name:'Petit-déjeuner', icon:'🥐', color:'var(--meal-petit)'},
   {key:'dej', name:'Déjeuner', icon:'🍲', color:'var(--meal-dej)'},
@@ -498,6 +627,18 @@ function mealDateKey(offset) {
   const d = new Date();
   d.setDate(d.getDate()+offset);
   return d.toISOString().split('T')[0];
+}
+
+async function loadMeals() {
+  const { data: meals, error } = await sb.from('meals').select('*').order('created_at', {ascending:true});
+  if(error) { console.error(error); alert('Erreur chargement repas : ' + error.message); return; }
+  mealsCache = (meals || []).map(m => ({
+    ...m,
+    date: m.day,
+    note: m.note || m.name || '',
+    photo_url: m.photo || ''
+  }));
+  renderMeals();
 }
 
 function changeMealDay(delta) {
@@ -516,13 +657,13 @@ function renderMeals() {
     label.textContent = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
   }
 
-  const dayMeals = data.meals.filter(m=>m.date===key);
+  const dayMeals = mealsCache.filter(m=>m.date===key);
   document.getElementById('meal-count-today').textContent = dayMeals.length;
 
   let streak = 0;
   for(let i=0;i<60;i++){
     const k = mealDateKey(-i);
-    if(data.meals.some(m=>m.date===k)) streak++;
+    if(mealsCache.some(m=>m.date===k)) streak++;
     else break;
   }
   document.getElementById('meal-streak').textContent = streak;
@@ -540,12 +681,12 @@ function renderMeals() {
       <div class="meal-entries">
         ${entries.length ? entries.map(e=>`
           <div class="meal-entry">
-            ${e.photo ? `<img class="meal-entry-photo" src="${e.photo}">` : `<div class="meal-entry-photo-empty">🍴</div>`}
+            ${e.photo_url ? `<img class="meal-entry-photo" src="${e.photo_url}">` : `<div class="meal-entry-photo-empty">🍴</div>`}
             <div class="meal-entry-body">
               <div class="meal-entry-note">${e.note||'Sans note'}</div>
-              <div class="meal-entry-time">${e.time}</div>
+              <div class="meal-entry-time">${e.time||''}</div>
             </div>
-            <button class="meal-entry-del" onclick="deleteMeal(${e.id})">✕</button>
+            <button class="meal-entry-del" onclick="deleteMeal('${e.id}')">✕</button>
           </div>`).join('') : `<div class="meal-empty">Aucun repas noté</div>`}
       </div>
     </div>`;
@@ -579,29 +720,43 @@ function previewMealPhoto(input) {
   reader.readAsDataURL(input.files[0]);
 }
 
-function saveMeal() {
+async function saveMeal() {
   const note = document.getElementById('meal-note').value.trim();
   if(!note && !mealPhotoData) { document.getElementById('meal-note').focus(); return; }
   const key = mealDateKey(mealDayOffset);
-  data.meals.push({
-    id: Date.now(),
-    date: key,
+  const btn = document.getElementById('save-meal-btn');
+  btn.disabled = true;
+
+  const { error } = await sb.from('meals').insert({
+    user_id: currentUser.id,
+    day: key,
     type: currentMealType,
+    name: note,
     note,
-    photo: mealPhotoData,
+    photo: mealPhotoData || '',
     time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
   });
+
+  btn.disabled = false;
+  if(error) { console.error(error); alert('Erreur sauvegarde repas : ' + error.message); return; }
   closeMealModal();
-  renderMeals();
+  await loadMeals();
 }
 
-function deleteMeal(id) {
-  data.meals = data.meals.filter(m=>m.id!==id);
-  renderMeals();
+async function deleteMeal(id) {
+  await sb.from('meals').delete().eq('id', id);
+  await loadMeals();
+}
+
+// ── MEASUREMENTS (Supabase) ───────────────────────
+async function loadMeasurements() {
+  const { data: measurements, error } = await sb.from('measurements').select('*').order('date', {ascending:true});
+  if(error) { console.error(error); return; }
+  measurementsCache = measurements;
 }
 
 function updateMetrics() {
-  const m = data.measurements;
+  const m = measurementsCache;
   if(m.length) {
     const last = m[m.length-1];
     const prev = m.length>1?m[m.length-2]:null;
@@ -624,7 +779,7 @@ function updateMetrics() {
     }
   }
   const now = new Date();
-  const count = data.workouts.filter(w=>{
+  const count = workoutsCache.filter(w=>{
     const d=new Date(w.date);
     return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
   }).length;
@@ -639,14 +794,16 @@ function switchChart(metric, btn) {
 }
 
 function renderChart() {
-  const m = data.measurements;
+  const m = measurementsCache;
   if(!m.length) return;
   const labels = m.map(d=>{const p=d.date.split('-');return p[2]+'/'+p[1]});
   const vals = m.map(d=>d[activeChart]);
   const colors = {weight:'#FF5E9C', waist:'#3FA9FF', hips:'#A85CFF'};
   const col = colors[activeChart];
   if(chartInst) chartInst.destroy();
-  const ctx = document.getElementById('progress-chart').getContext('2d');
+  const canvasEl = document.getElementById('progress-chart');
+  if(!canvasEl) return;
+  const ctx = canvasEl.getContext('2d');
   chartInst = new Chart(ctx,{
     type:'line',
     data:{
@@ -682,30 +839,60 @@ function renderChart() {
   });
 }
 
-function addEntry() {
+async function addEntry() {
   const w=parseFloat(document.getElementById('inp-weight').value);
   const wa=parseFloat(document.getElementById('inp-waist').value);
   const h=parseFloat(document.getElementById('inp-hips').value);
   if(!w&&!wa&&!h) return;
   const today=new Date().toISOString().split('T')[0];
-  const existing=data.measurements.findIndex(m=>m.date===today);
-  const entry={date:today, weight:w||data.measurements[data.measurements.length-1]?.weight||0,
-    waist:wa||data.measurements[data.measurements.length-1]?.waist||0,
-    hips:h||data.measurements[data.measurements.length-1]?.hips||0};
-  if(existing>=0) data.measurements[existing]=entry; else data.measurements.push(entry);
+  const last = measurementsCache[measurementsCache.length-1];
+  const entry={
+    user_id: currentUser.id,
+    date:today,
+    weight:w||last?.weight||0,
+    waist:wa||last?.waist||0,
+    hips:h||last?.hips||0
+  };
+
+  const existing = measurementsCache.find(m=>m.date===today);
+  if(existing) {
+    await sb.from('measurements').update(entry).eq('id', existing.id);
+  } else {
+    await sb.from('measurements').insert(entry);
+  }
+
   document.getElementById('inp-weight').value='';
   document.getElementById('inp-waist').value='';
   document.getElementById('inp-hips').value='';
+  await loadMeasurements();
   updateMetrics();
   renderChart();
 }
 
-function addPhoto(input) {
+// ── PHOTOS (Supabase) ──────────────────────────────
+async function loadPhotos() {
+  const { data: photos, error } = await sb.from('photos').select('*').order('created_at', {ascending:false});
+  if(error) { console.error(error); alert('Erreur chargement photos : ' + error.message); return; }
+  photosCache = (photos || []).map(p => ({
+    ...p,
+    photo_url: p.src,
+    taken_at: p.created_at || p.date
+  }));
+  renderPhotos();
+}
+
+async function addPhoto(input) {
   if(!input.files[0]) return;
   const reader = new FileReader();
-  reader.onload = e=>{
-    data.photos.unshift({src:e.target.result, date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}), label:'Photo progrès'});
-    renderPhotos();
+  reader.onload = async e=>{
+    const { error } = await sb.from('photos').insert({
+      user_id: currentUser.id,
+      src: e.target.result,
+      date: new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}),
+      label: 'Photo progr?s'
+    });
+    if(error) { console.error(error); alert('Erreur sauvegarde photo : ' + error.message); return; }
+    await loadPhotos();
   };
   reader.readAsDataURL(input.files[0]);
   input.value='';
@@ -737,22 +924,19 @@ function setCompare(slot, input) {
 
 function renderPhotos() {
   const grid = document.getElementById('photos-grid');
-  if(!data.photos.length){
+  if(!photosCache.length){
     grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>`;
     return;
   }
-  grid.innerHTML=data.photos.map(p=>`
+  grid.innerHTML=photosCache.map(p=>`
     <div class="photo-card">
-      <img class="photo-img" src="${p.src}" alt="Photo progrès">
+      <img class="photo-img" src="${p.photo_url || p.src}" alt="Photo progrès">
       <div class="photo-meta">
-        <div class="photo-date">${p.date}</div>
-        <div class="photo-label">${p.label}</div>
+        <div class="photo-date">${p.date || new Date(p.taken_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</div>
+        <div class="photo-label">${p.label||''}</div>
       </div>
     </div>`).join('');
 }
-
-renderWorkouts();
-updateMetrics();
-renderPhotos();
-renderMeals();
 </script>
+</body>
+</html>
