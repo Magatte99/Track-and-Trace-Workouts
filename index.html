@@ -185,6 +185,7 @@ canvas{width:100%!important}
 </head>
 <body>
 
+<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">
@@ -207,6 +208,7 @@ canvas{width:100%!important}
   </div>
 </div>
 
+<!-- MAIN APP -->
 <div id="app">
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('workout')">Entraînements</button>
@@ -361,6 +363,10 @@ canvas{width:100%!important}
           <img id="meal-photo-preview" class="photo-pick-preview" style="display:none">
         </div>
         <input type="file" class="file-input" id="meal-photo-input" accept="image/*" onchange="previewMealPhoto(this)">
+      </div>
+      <div class="form-group">
+        <label>Heure du repas</label>
+        <input type="time" id="meal-time">
       </div>
       <div class="form-group">
         <label>Note</label>
@@ -703,6 +709,13 @@ function openMealModal(type) {
   document.getElementById('meal-photo-placeholder').style.display = 'block';
   document.getElementById('meal-photo-text').style.display = 'block';
   document.getElementById('meal-photo-input').value = '';
+  
+  // Définit automatiquement l'heure actuelle du système par défaut
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('meal-time').value = `${hours}:${minutes}`;
+
   document.getElementById('meal-modal').classList.add('open');
 }
 function closeMealModal() { document.getElementById('meal-modal').classList.remove('open'); }
@@ -724,17 +737,20 @@ function previewMealPhoto(input) {
 async function saveMeal() {
   const note = document.getElementById('meal-note').value.trim();
   const key = getMealDateKey();
+  
+  // Récupère l'heure entrée manuellement dans le formulaire
+  const inputTime = document.getElementById('meal-time').value; 
+  
   const btn = document.getElementById('save-meal-btn');
   btn.disabled = true;
 
-  // LIGNE NETTOYÉE : On n'envoie plus la colonne "name" qui n'existait pas
   const { error } = await sb.from('meals').insert({
     user_id: currentUser.id,
     day: key,
     type: currentMealType,
     note,
     photo: mealPhotoData || '',
-    time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+    time: inputTime || '12:00'
   });
 
   btn.disabled = false;
