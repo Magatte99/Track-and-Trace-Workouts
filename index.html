@@ -40,7 +40,6 @@ html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-sy
 .auth-msg.success{background:rgba(34,216,143,.15);color:var(--green)}
 #app{display:none}
 
-*{box-sizing:border-box}
 .nav{display:flex;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--border);overflow-x:auto;align-items:center}
 .nav-btn{padding:8px 12px;border:none;background:none;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all .2s;white-space:nowrap}
 .nav-btn.active{background:var(--bg2);color:var(--text)}
@@ -186,7 +185,6 @@ canvas{width:100%!important}
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">
@@ -209,7 +207,6 @@ canvas{width:100%!important}
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="app">
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('workout')">Entraînements</button>
@@ -447,7 +444,6 @@ function onLoginSuccess(user) {
   initApp();
 }
 
-// Check existing session on load
 sb.auth.getSession().then(({ data }) => {
   if(data.session) onLoginSuccess(data.session.user);
 });
@@ -481,7 +477,7 @@ function showPage(p) {
   if(p==='meals') renderMeals();
 }
 
-// ── WORKOUTS (Supabase) ───────────────────────────
+// ── WORKOUTS ──────────────────────────────────────
 async function loadWorkouts() {
   const { data: workouts, error } = await sb.from('workouts').select('*').order('date', {ascending:false});
   if(error) { console.error(error); alert('Erreur chargement séances : ' + error.message); return; }
@@ -532,7 +528,6 @@ function toggleDetail(id) {
   const arr = document.getElementById('arr-'+id);
   const open = det.classList.toggle('open');
   arr.style.transform = open ? 'rotate(90deg)' : '';
-  arr.style.transition = 'transform .2s';
 }
 
 function filterCat(cat, btn) {
@@ -543,6 +538,7 @@ function filterCat(cat, btn) {
 }
 
 function fmtDate(d) {
+  if(!d) return '';
   const [y,m,day] = d.split('-');
   const months = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
   return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
@@ -594,7 +590,6 @@ async function saveWorkout() {
     });
   }
   const finalExercises = exercises.length?exercises:[{name:'Exercice',machine:'?',sets:3,reps:'10',weight:'?'}];
-
   const btn = document.getElementById('save-workout-btn');
   btn.disabled = true;
 
@@ -607,65 +602,69 @@ async function saveWorkout() {
   });
 
   btn.disabled = false;
-  if(error) { console.error(error); alert('Erreur sauvegarde séance : ' + error.message); return; }
+  if(error) { alert('Erreur : ' + error.message); return; }
   closeModal();
   await loadWorkouts();
   updateMetrics();
 }
 
-// ── MEALS (Supabase) ──────────────────────────────
+// ── MEALS ─────────────────────────────────────────
 const mealTypes = [
-  {key:'petit', name:'Petit-déjeuner', icon:'🥐', color:'var(--meal-petit)'},
-  {key:'dej', name:'Déjeuner', icon:'🍲', color:'var(--meal-dej)'},
-  {key:'diner', name:'Dîner', icon:'🍽️', color:'var(--meal-diner)'},
-  {key:'snack', name:'Collation', icon:'🍎', color:'var(--meal-snack)'}
+  {key:'petit', name:'Petit Déjeuner', icon:'🥐', color:'var(--meal-petit)'},
+  {key:'dej', name:'Déjeuner', icon:'🥗', color:'var(--meal-dej)'},
+  {key:'diner', name:'Dîner', icon:'🍗', color:'var(--meal-diner)'},
+  {key:'snack', name:'Collation / Snack', icon:'🍎', color:'var(--meal-snack)'}
 ];
-let mealDayOffset = 0;
-let currentMealType = null;
-let mealPhotoData = null;
 
-function mealDateKey(offset) {
-  const d = new Date();
-  d.setDate(d.getDate()+offset);
+let currentMealDate = new Date();
+let currentMealType = '';
+let mealPhotoData = '';
+
+function getMealDateKey() {
+  const offset = currentMealDate.getTimezoneOffset();
+  const d = new Date(currentMealDate.getTime() - (offset*60*1000));
   return d.toISOString().split('T')[0];
 }
 
 async function loadMeals() {
-  const { data: meals, error } = await sb.from('meals').select('*').order('created_at', {ascending:true});
-  if(error) { console.error(error); alert('Erreur chargement repas : ' + error.message); return; }
-  mealsCache = (meals || []).map(m => ({
-    ...m,
-    date: m.day,
-    note: m.note || m.name || '',
-    photo_url: m.photo || ''
-  }));
-  renderMeals();
+  const { data, error } = await sb.from('meals').select('*').order('time', {ascending:true});
+  if(error) { console.error(error); return; }
+  mealsCache = data || [];
+  if(document.getElementById('page-meals').classList.contains('active')) renderMeals();
 }
 
-function changeMealDay(delta) {
-  mealDayOffset += delta;
+function changeMealDay(dir) {
+  currentMealDate.setDate(currentMealDate.getDate() + dir);
   renderMeals();
 }
 
 function renderMeals() {
-  const key = mealDateKey(mealDayOffset);
-  const label = document.getElementById('meal-day-label');
-  if(mealDayOffset===0) label.textContent = "Aujourd'hui";
-  else if(mealDayOffset===-1) label.textContent = "Hier";
-  else if(mealDayOffset===1) label.textContent = "Demain";
-  else {
-    const d = new Date(); d.setDate(d.getDate()+mealDayOffset);
-    label.textContent = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
-  }
+  const key = getMealDateKey();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-  const dayMeals = mealsCache.filter(m=>m.date===key);
+  let lbl = key;
+  if(key === todayStr) lbl = "Aujourd'hui";
+  else if(key === yesterdayStr) lbl = "Hier";
+  else {
+    lbl = currentMealDate.toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short'});
+  }
+  document.getElementById('meal-day-label').textContent = lbl;
+
+  const dayMeals = mealsCache.filter(m=>m.day===key);
   document.getElementById('meal-count-today').textContent = dayMeals.length;
 
-  let streak = 0;
-  for(let i=0;i<60;i++){
-    const k = mealDateKey(-i);
-    if(mealsCache.some(m=>m.date===k)) streak++;
-    else break;
+  // Streak calculation
+  const dates = [...new Set(mealsCache.map(m=>m.day))].sort((a,b)=>new Date(b)-new Date(a));
+  let streak = 0; let check = new Date();
+  while(true) {
+    const s = check.toISOString().split('T')[0];
+    if(dates.includes(s)) { streak++; check.setDate(check.getDate()-1); }
+    else {
+      if(s === todayStr && dates.includes(yesterdayStr)) { check.setDate(check.getDate()-1); continue; }
+      break;
+    }
   }
   document.getElementById('meal-streak').textContent = streak;
 
@@ -673,245 +672,219 @@ function renderMeals() {
   grid.innerHTML = mealTypes.map(t=>{
     const entries = dayMeals.filter(m=>m.type===t.key);
     return `
-    <div class="meal-type-block">
-      <div class="meal-type-head">
-        <div class="meal-type-icon" style="background:${t.color}22;color:${t.color}">${t.icon}</div>
-        <div class="meal-type-name">${t.name}</div>
-        <button class="meal-add-btn" onclick="openMealModal('${t.key}')">+</button>
-      </div>
-      <div class="meal-entries">
-        ${entries.length ? entries.map(e=>`
-          <div class="meal-entry">
-            ${e.photo_url ? `<img class="meal-entry-photo" src="${e.photo_url}">` : `<div class="meal-entry-photo-empty">🍴</div>`}
-            <div class="meal-entry-body">
-              <div class="meal-entry-note">${e.note||'Sans note'}</div>
-              <div class="meal-entry-time">${e.time||''}</div>
-            </div>
-            <button class="meal-entry-del" onclick="deleteMeal('${e.id}')">✕</button>
-          </div>`).join('') : `<div class="meal-empty">Aucun repas noté</div>`}
-      </div>
-    </div>`;
+      <div class="meal-type-block">
+        <div class="meal-type-head">
+          <div class="meal-type-icon" style="background:${t.color}20;color:${t.color}">${t.icon}</div>
+          <div class="meal-type-name">${t.name}</div>
+          <button class="meal-add-btn" onclick="openMealModal('${t.key}')">+</button>
+        </div>
+        <div class="meal-entries">
+          ${entries.length ? entries.map(e=>`
+            <div class="meal-entry">
+              ${e.photo ? `<img src="${e.photo}" class="meal-entry-photo">` : `<div class="meal-entry-photo-empty">🍽️</div>`}
+              <div class="meal-entry-body">
+                <div class="meal-entry-note">${e.note || 'Repas enregistré'}</div>
+                <div class="meal-entry-time">🕒 ${e.time || '—'}</div>
+              </div>
+              <button class="meal-entry-del" onclick="deleteMeal('${e.id}')">✕</button>
+            </div>`).join('') : `<div class="meal-empty">Aucun aliment noté</div>`}
+        </div>
+      </div>`;
   }).join('');
 }
 
-function openMealModal(typeKey) {
-  currentMealType = typeKey;
-  mealPhotoData = null;
-  const t = mealTypes.find(x=>x.key===typeKey);
-  document.getElementById('meal-modal-title').textContent = 'Ajouter — '+t.name;
+function openMealModal(type) {
+  currentMealType = type;
+  const t = mealTypes.find(x=>x.key===type);
+  document.getElementById('meal-modal-title').textContent = "Ajouter : " + t.name;
   document.getElementById('meal-note').value = '';
+  mealPhotoData = '';
   document.getElementById('meal-photo-preview').style.display = 'none';
   document.getElementById('meal-photo-placeholder').style.display = 'block';
   document.getElementById('meal-photo-text').style.display = 'block';
+  document.getElementById('meal-photo-input').value = '';
   document.getElementById('meal-modal').classList.add('open');
 }
 function closeMealModal() { document.getElementById('meal-modal').classList.remove('open'); }
 
 function previewMealPhoto(input) {
-  if(!input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    mealPhotoData = e.target.result;
-    const preview = document.getElementById('meal-photo-preview');
-    preview.src = mealPhotoData;
-    preview.style.display = 'block';
-    document.getElementById('meal-photo-placeholder').style.display = 'none';
-    document.getElementById('meal-photo-text').style.display = 'none';
-  };
-  reader.readAsDataURL(input.files[0]);
+  if(input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      mealPhotoData = e.target.result;
+      document.getElementById('meal-photo-preview').src = mealPhotoData;
+      document.getElementById('meal-photo-preview').style.display = 'block';
+      document.getElementById('meal-photo-placeholder').style.display = 'none';
+      document.getElementById('meal-photo-text').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 
 async function saveMeal() {
   const note = document.getElementById('meal-note').value.trim();
-  if(!note && !mealPhotoData) { document.getElementById('meal-note').focus(); return; }
-  const key = mealDateKey(mealDayOffset);
+  const key = getMealDateKey();
   const btn = document.getElementById('save-meal-btn');
   btn.disabled = true;
 
+  // LIGNE NETTOYÉE : On n'envoie plus la colonne "name" qui n'existait pas
   const { error } = await sb.from('meals').insert({
     user_id: currentUser.id,
     day: key,
     type: currentMealType,
-    name: note,
     note,
     photo: mealPhotoData || '',
     time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
   });
 
   btn.disabled = false;
-  if(error) { console.error(error); alert('Erreur sauvegarde repas : ' + error.message); return; }
+  if(error) { alert('Erreur : ' + error.message); return; }
   closeMealModal();
   await loadMeals();
 }
 
 async function deleteMeal(id) {
-  await sb.from('meals').delete().eq('id', id);
-  await loadMeals();
+  if(!confirm('Supprimer ce repas ?')) return;
+  const { error } = await sb.from('meals').delete().eq('id', id);
+  if(error) alert(error.message);
+  else await loadMeals();
 }
 
-// ── MEASUREMENTS (Supabase) ───────────────────────
+// ── PROGRESS MEASUREMENTS ────────────────────────
 async function loadMeasurements() {
-  const { data: measurements, error } = await sb.from('measurements').select('*').order('date', {ascending:true});
+  const { data, error } = await sb.from('measurements').select('*').order('date', {ascending:true});
   if(error) { console.error(error); return; }
-  measurementsCache = measurements;
+  measurementsCache = data || [];
 }
 
 function updateMetrics() {
-  const m = measurementsCache;
-  if(m.length) {
-    const last = m[m.length-1];
-    const prev = m.length>1?m[m.length-2]:null;
-    document.getElementById('cur-weight').textContent = last.weight+'kg';
-    document.getElementById('cur-waist').textContent = last.waist+'cm';
-    document.getElementById('cur-hips').textContent = last.hips+'cm';
-    if(prev){
-      const dw = (last.weight-prev.weight).toFixed(1);
-      const dwa = (last.waist-prev.waist).toFixed(1);
-      const dh = (last.hips-prev.hips).toFixed(1);
-      const wd=document.getElementById('weight-delta');
-      wd.textContent=(dw>0?'+':'')+dw+'kg vs précédent';
-      wd.className='metric-delta '+(dw<=0?'delta-pos':'delta-neg');
-      const wad=document.getElementById('waist-delta');
-      wad.textContent=(dwa>0?'+':'')+dwa+'cm';
-      wad.className='metric-delta '+(dwa<=0?'delta-pos':'delta-neg');
-      const hd=document.getElementById('hips-delta');
-      hd.textContent=(dh>0?'+':'')+dh+'cm';
-      hd.className='metric-delta '+(dh<=0?'delta-pos':'delta-neg');
-    }
-  }
-  const now = new Date();
-  const count = workoutsCache.filter(w=>{
-    const d=new Date(w.date);
-    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-  }).length;
-  document.getElementById('sessions-count').textContent = count;
+  if(!measurementsCache.length) return;
+  const last = measurementsCache[measurementsCache.length-1];
+  document.getElementById('cur-weight').textContent = last.weight ? last.weight + ' kg' : '—';
+  document.getElementById('cur-waist').textContent = last.waist ? last.waist + ' cm' : '—';
+  document.getElementById('cur-hips').textContent = last.hips ? last.hips + ' cm' : '—';
+  document.getElementById('sessions-count').textContent = workoutsCache.length;
 }
 
-function switchChart(metric, btn) {
-  activeChart = metric;
+async function addEntry() {
+  const weight = parseFloat(document.getElementById('inp-weight').value);
+  const waist = parseFloat(document.getElementById('inp-waist').value);
+  const hips = parseFloat(document.getElementById('inp-hips').value);
+  const date = new Date().toISOString().split('T')[0];
+
+  if(!weight && !waist && !hips) return;
+
+  const { error } = await sb.from('measurements').insert({
+    user_id: currentUser.id,
+    date,
+    weight: weight || 0,
+    waist: waist || 0,
+    hips: hips || 0
+  });
+
+  if(error) { alert(error.message); return; }
+  document.getElementById('inp-weight').value = '';
+  document.getElementById('inp-waist').value = '';
+  document.getElementById('inp-hips').value = '';
+  await loadMeasurements();
+  updateMetrics();
+  renderChart();
+}
+
+function switchChart(field, btn) {
+  activeChart = field;
   document.querySelectorAll('.chart-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderChart();
 }
 
 function renderChart() {
-  const m = measurementsCache;
-  if(!m.length) return;
-  const labels = m.map(d=>{const p=d.date.split('-');return p[2]+'/'+p[1]});
-  const vals = m.map(d=>d[activeChart]);
-  const colors = {weight:'#FF5E9C', waist:'#3FA9FF', hips:'#A85CFF'};
-  const col = colors[activeChart];
+  const ctx = document.getElementById('progress-chart');
+  if(!ctx) return;
+  const data = measurementsCache.filter(m=>m[activeChart] > 0);
+  const labels = data.map(m=>fmtDate(m.date));
+  const values = data.map(m=>m[activeChart]);
+
   if(chartInst) chartInst.destroy();
-  const canvasEl = document.getElementById('progress-chart');
-  if(!canvasEl) return;
-  const ctx = canvasEl.getContext('2d');
-  chartInst = new Chart(ctx,{
+  chartInst = new Chart(ctx, {
     type:'line',
     data:{
       labels,
       datasets:[{
-        data:vals,
-        borderColor:col,
-        backgroundColor:col+'33',
-        borderWidth:3,
-        pointBackgroundColor:col,
-        pointRadius:4,
-        pointHoverRadius:6,
-        fill:true,
-        tension:.35
+        label:activeChart.toUpperCase(),
+        data:values,
+        borderColor:'#FF5E9C',
+        backgroundColor:'rgba(255,94,156,0.1)',
+        tension:0.3,
+        fill:true
       }]
     },
     options:{
       responsive:true,
-      plugins:{legend:{display:false},tooltip:{
-        backgroundColor:'#1F1840',
-        borderColor:'#362A6E',
-        borderWidth:1,
-        titleColor:'#B8AEDC',
-        bodyColor:'#FFFFFF',
-        callbacks:{label:c=>c.parsed.y+(activeChart==='weight'?' kg':' cm')}
-      }},
+      plugins:{legend:{display:false}},
       scales:{
-        x:{grid:{color:'#362A6E'},ticks:{color:'#6E5FA8',font:{size:11}}},
-        y:{grid:{color:'#2A2058'},ticks:{color:'#6E5FA8',font:{size:11}},
-          suggestedMin:Math.min(...vals)-2,suggestedMax:Math.max(...vals)+2}
+        x:{grid:{display:false},ticks:{color:'#6E5FA8'}},
+        y:{grid:{color:'#362A6E'},ticks:{color:'#6E5FA8'}}
       }
     }
   });
 }
 
-async function addEntry() {
-  const w=parseFloat(document.getElementById('inp-weight').value);
-  const wa=parseFloat(document.getElementById('inp-waist').value);
-  const h=parseFloat(document.getElementById('inp-hips').value);
-  if(!w&&!wa&&!h) return;
-  const today=new Date().toISOString().split('T')[0];
-  const last = measurementsCache[measurementsCache.length-1];
-  const entry={
-    user_id: currentUser.id,
-    date:today,
-    weight:w||last?.weight||0,
-    waist:wa||last?.waist||0,
-    hips:h||last?.hips||0
-  };
-
-  const existing = measurementsCache.find(m=>m.date===today);
-  if(existing) {
-    await sb.from('measurements').update(entry).eq('id', existing.id);
-  } else {
-    await sb.from('measurements').insert(entry);
-  }
-
-  document.getElementById('inp-weight').value='';
-  document.getElementById('inp-waist').value='';
-  document.getElementById('inp-hips').value='';
-  await loadMeasurements();
-  updateMetrics();
-  renderChart();
-}
-
-// ── PHOTOS (Supabase) ──────────────────────────────
+// ── PHOTOS ────────────────────────────────────────
 async function loadPhotos() {
-  const { data: photos, error } = await sb.from('photos').select('*').order('created_at', {ascending:false});
-  if(error) { console.error(error); alert('Erreur chargement photos : ' + error.message); return; }
-  photosCache = (photos || []).map(p => ({
-    ...p,
-    photo_url: p.src,
-    taken_at: p.created_at || p.date
-  }));
+  const { data, error } = await sb.from('photos').select('*').order('created_at', {ascending:false});
+  if(error) { console.error(error); return; }
+  photosCache = data || [];
   renderPhotos();
 }
 
 async function addPhoto(input) {
-  if(!input.files[0]) return;
+  if(!input.files || !input.files[0]) return;
+  const label = prompt('Légende pour cette photo (ex: Forme du matin) :') || '';
   const reader = new FileReader();
-  reader.onload = async e=>{
+  reader.onload = async function(e) {
     const { error } = await sb.from('photos').insert({
       user_id: currentUser.id,
       src: e.target.result,
-      date: new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}),
-      label: 'Photo progrès'
+      date: new Date().toLocaleDateString('fr-FR'),
+      label
     });
-    if(error) { console.error(error); alert('Erreur sauvegarde photo : ' + error.message); return; }
-    await loadPhotos();
+    if(error) alert(error.message);
+    else await loadPhotos();
   };
   reader.readAsDataURL(input.files[0]);
-  input.value='';
+  input.value = '';
 }
 
-let compareA=null, compareB=null;
+function renderPhotos() {
+  const grid = document.getElementById('photos-grid');
+  if(!photosCache.length){
+    grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>`;
+    return;
+  }
+  grid.innerHTML = photosCache.map(p=>`
+    <div class="photo-card">
+      <img src="${p.src}" class="photo-img">
+      <div class="photo-meta">
+        <div class="photo-date">${p.date || '—'}</div>
+        <div class="photo-label">${p.label || '—'}</div>
+      </div>
+    </div>`).join('');
+}
+
+let compareA = '', compareB = '';
 function setCompare(slot, input) {
-  if(!input.files[0]) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    if(slot==='a') compareA=e.target.result; else compareB=e.target.result;
-    document.getElementById('slot-'+slot).textContent=slot==='a'?'✓ Avant sélectionné':'✓ Après sélectionné';
-    document.getElementById('slot-'+slot).style.borderColor='var(--green)';
-    document.getElementById('slot-'+slot).style.color='var(--green)';
-    if(compareA&&compareB){
-      document.getElementById('compare-view').style.display='block';
-      document.getElementById('compare-view').innerHTML=`
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;border-radius:var(--radius);overflow:hidden">
+  if(!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if(slot==='a') { compareA = e.target.result; document.getElementById('slot-a').textContent = "✅ Avant chargé"; }
+    if(slot==='b') { compareB = e.target.result; document.getElementById('slot-b').textContent = "✅ Après chargé"; }
+    
+    if(compareA && compareB) {
+      const view = document.getElementById('compare-view');
+      view.style.display = 'block';
+      view.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;border-radius:16px;overflow:hidden">
           <div style="position:relative"><img src="${compareA}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block">
             <div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.7);padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:#fff">AVANT</div></div>
           <div style="position:relative"><img src="${compareB}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block">
@@ -921,22 +894,6 @@ function setCompare(slot, input) {
   };
   reader.readAsDataURL(input.files[0]);
   input.value='';
-}
-
-function renderPhotos() {
-  const grid = document.getElementById('photos-grid');
-  if(!photosCache.length){
-    grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>`;
-    return;
-  }
-  grid.innerHTML=photosCache.map(p=>`
-    <div class="photo-card">
-      <img class="photo-img" src="${p.photo_url || p.src}" alt="Photo progrès">
-      <div class="photo-meta">
-        <div class="photo-date">${p.date || new Date(p.taken_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}</div>
-        <div class="photo-label">${p.label||''}</div>
-      </div>
-    </div>`).join('');
 }
 </script>
 </body>
