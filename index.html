@@ -383,6 +383,7 @@ canvas{width:100%!important}
 const SUPABASE_URL = "https://yuxcobevphawhbhmlvca.supabase.co";
 const SUPABASE_KEY = "sb_publishable_dR_-4R5lMsFmo18bYEdjEQ_p-Y2Z-Fd";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const APP_URL = "https://magatte99.github.io/Track-and-Trace-Workouts/";
 
 let currentUser = null;
 let authMode = 'login';
@@ -417,7 +418,7 @@ async function handleAuth() {
     }
     onLoginSuccess(data.user);
   } else {
-    const { data, error } = await sb.auth.signUp({ email, password });
+    const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: APP_URL } });
     if(error) {
       msg.innerHTML = `<div class="auth-msg error">${error.message}</div>`;
       btn.disabled = false;
@@ -940,4 +941,6 @@ function renderPhotos() {
 </script>
 </body>
 </html>
+
+
 
