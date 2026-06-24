@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fitness Tracker</title>
+<title>Workout Progress</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -116,22 +116,20 @@ html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-sy
 .section-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .section-title::before{content:'';width:4px;height:16px;background:var(--grad1);border-radius:2px;display:inline-block}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.metric-card{background:var(--bg2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);position:relative;overflow:hidden}
-.metric-card::after{content:'';position:absolute;top:0;right:0;width:50px;height:50px;background:var(--grad1);opacity:.12;border-radius:50%;transform:translate(15px,-15px)}
+.metric-card{background:var(--bg2);border-radius:var(--radius);padding:12px;border:1px solid var(--border);position:relative;overflow:hidden}
+.metric-card::after{content:'';position:absolute;top:0;right:0;width:40px;height:40px;background:var(--grad1);opacity:.08;border-radius:50%;transform:translate(12px,-12px)}
 .metric-label{font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.metric-val{font-size:23px;font-weight:800;margin-top:4px}
-.metric-delta{font-size:11px;margin-top:2px;font-weight:600}
-.delta-pos{color:var(--green)}.delta-neg{color:var(--accent)}
-.chart-wrap{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:16px}
-.chart-tabs{display:flex;gap:6px;margin-bottom:14px}
-.chart-tab{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.metric-val{font-size:19px;font-weight:800;margin-top:4px}
+.chart-wrap{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:24px}
+.chart-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+.chart-tab{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
 .chart-tab.active{background:var(--grad1);border-color:transparent;color:#fff}
 canvas{width:100%!important}
-.input-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.input-row input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;color:var(--text);font-size:13px;outline:none}
-.input-row input:focus{border-color:var(--accent)}
-.input-row input::placeholder{color:var(--text3)}
-.btn-add-entry{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 14px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s;width:100%}
+.input-grid-mensuras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.input-grid-mensuras input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;color:var(--text);font-size:13px;outline:none;width:100%}
+.input-grid-mensuras input:focus{border-color:var(--accent)}
+.input-grid-mensuras input::placeholder{color:var(--text3)}
+.btn-add-entry{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;width:100%}
 .btn-add-entry:hover{background:var(--bg4)}
 
 .photo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
@@ -185,12 +183,11 @@ canvas{width:100%!important}
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">
       <div class="auth-logo-icon">⚡</div>
-      <h1>Fitness Tracker</h1>
+      <h1>Workout Progress</h1>
       <p>Connecte-toi pour accéder à tes données</p>
     </div>
     <div class="auth-tabs">
@@ -208,13 +205,11 @@ canvas{width:100%!important}
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="app">
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('workout')">Entraînements</button>
   <button class="nav-btn" onclick="showPage('meals')">Repas</button>
-  <button class="nav-btn" onclick="showPage('progress')">Progrès</button>
-  <button class="nav-btn" onclick="showPage('photos')">Photos</button>
+  <button class="nav-btn" onclick="showPage('progress')">Mensurations</button>
   <button class="nav-logout" onclick="handleLogout()">Déconnexion</button>
 </nav>
 
@@ -253,66 +248,82 @@ canvas{width:100%!important}
 
 <div class="page" id="page-progress">
   <div class="progress-section">
-    <div class="section-title">Vue d'ensemble</div>
+    <div class="section-title">Dernières Mensurations</div>
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-label">Poids actuel</div>
+        <div class="metric-label">Poids</div>
         <div class="metric-val" id="cur-weight">—</div>
-        <div class="metric-delta delta-neg" id="weight-delta"></div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Tour de taille</div>
+        <div class="metric-label">Bras</div>
+        <div class="metric-val" id="cur-arms">—</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cuisses</div>
+        <div class="metric-val" id="cur-legs">—</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Ventre</div>
         <div class="metric-val" id="cur-waist">—</div>
-        <div class="metric-delta" id="waist-delta"></div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Tour de hanches</div>
+        <div class="metric-label">Hanches</div>
         <div class="metric-val" id="cur-hips">—</div>
-        <div class="metric-delta" id="hips-delta"></div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Séances ce mois</div>
-        <div class="metric-val" id="sessions-count">0</div>
-        <div class="metric-delta delta-pos"></div>
+        <div class="metric-label">Poitrine</div>
+        <div class="metric-val" id="cur-chest">—</div>
       </div>
     </div>
   </div>
+
   <div class="progress-section">
-    <div class="section-title">Graphique</div>
+    <div class="section-title">Évolution</div>
     <div class="chart-wrap">
       <div class="chart-tabs">
         <button class="chart-tab active" onclick="switchChart('weight',this)">Poids (kg)</button>
-        <button class="chart-tab" onclick="switchChart('waist',this)">Taille (cm)</button>
+        <button class="chart-tab" onclick="switchChart('arms',this)">Bras (cm)</button>
+        <button class="chart-tab" onclick="switchChart('legs',this)">Cuisses (cm)</button>
+        <button class="chart-tab" onclick="switchChart('waist',this)">Ventre (cm)</button>
         <button class="chart-tab" onclick="switchChart('hips',this)">Hanches (cm)</button>
+        <button class="chart-tab" onclick="switchChart('chest',this)">Poitrine (cm)</button>
       </div>
       <canvas id="progress-chart" height="180"></canvas>
-      <div class="input-row">
-        <input type="number" id="inp-weight" placeholder="Poids kg" step="0.1">
-        <input type="number" id="inp-waist" placeholder="Taille cm">
-        <input type="number" id="inp-hips" placeholder="Hanches cm">
+      
+      <div class="input-grid-mensuras">
+        <input type="number" id="inp-weight" placeholder="Poids (kg)" step="0.1">
+        <input type="number" id="inp-arms" placeholder="Bras (cm)" step="0.1">
+        <input type="number" id="inp-legs" placeholder="Cuisses (cm)" step="0.1">
+        <input type="number" id="inp-waist" placeholder="Ventre (cm)" step="0.1">
+        <input type="number" id="inp-hips" placeholder="Hanches (cm)" step="0.1">
+        <input type="number" id="inp-chest" placeholder="Poitrine (cm)" step="0.1">
       </div>
-      <button class="btn-add-entry" onclick="addEntry()">+ Ajouter mesure aujourd'hui</button>
+      <button class="btn-add-entry" onclick="addEntry()">+ Enregistrer les mesures du jour</button>
     </div>
+  </div>
+
+  <div class="progress-section">
+    <div class="section-title">Photos de progression</div>
+    <div class="compare-bar">
+      <p>Comparaison avant / après</p>
+      <div class="compare-slots">
+        <div class="slot-btn" id="slot-a" onclick="document.getElementById('file-a').click()">Sélectionner Avant</div>
+        <div class="slot-btn" id="slot-b" onclick="document.getElementById('file-b').click()">Sélectionner Après</div>
+      </div>
+      <input type="file" class="file-input" id="file-a" accept="image/*" onchange="setCompare('a',this)">
+      <input type="file" class="file-input" id="file-b" accept="image/*" onchange="setCompare('b',this)">
+    </div>
+    <div id="compare-view" style="display:none;margin-bottom:16px"></div>
+    
+    <div class="photo-header">
+      <span style="font-weight:700;font-size:14px;color:var(--text2)">Galerie photos</span>
+      <button class="btn-primary btn-sm" onclick="document.getElementById('file-new').click()">+ Ajouter Photo</button>
+      <input type="file" class="file-input" id="file-new" accept="image/*" onchange="addPhoto(this)">
+    </div>
+    <div class="photos-grid" id="photos-grid"><div class="loading-state" style="grid-column:1/-1">Chargement...</div></div>
   </div>
 </div>
 
-<div class="page" id="page-photos">
-  <div class="compare-bar">
-    <p>Comparaison avant / après</p>
-    <div class="compare-slots">
-      <div class="slot-btn" id="slot-a" onclick="document.getElementById('file-a').click()">Sélectionner Avant</div>
-      <div class="slot-btn" id="slot-b" onclick="document.getElementById('file-b').click()">Sélectionner Après</div>
-    </div>
-    <input type="file" class="file-input" id="file-a" accept="image/*" onchange="setCompare('a',this)">
-    <input type="file" class="file-input" id="file-b" accept="image/*" onchange="setCompare('b',this)">
-  </div>
-  <div id="compare-view" style="display:none;margin-bottom:16px"></div>
-  <div class="photo-header">
-    <span style="font-weight:700;font-size:15px">Galerie progrès</span>
-    <button class="btn-primary btn-sm" onclick="document.getElementById('file-new').click()">+ Photo</button>
-    <input type="file" class="file-input" id="file-new" accept="image/*" onchange="addPhoto(this)">
-  </div>
-  <div class="photos-grid" id="photos-grid"><div class="loading-state" style="grid-column:1/-1">Chargement...</div></div>
 </div>
 
 <div class="modal-overlay" id="modal">
@@ -382,7 +393,6 @@ canvas{width:100%!important}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── SUPABASE CONFIG ───────────────────────────────
 const SUPABASE_URL = "https://yuxcobevphawhbhmlvca.supabase.co";
 const SUPABASE_KEY = "sb_publishable_dR_-4R5lMsFmo18bYEdjEQ_p-Y2Z-Fd";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -391,7 +401,6 @@ const APP_URL = "https://magatte99.github.io/Track-and-Trace-Workouts/";
 let currentUser = null;
 let authMode = 'login';
 
-// ── AUTH ──────────────────────────────────────────
 function switchAuthTab(mode) {
   authMode = mode;
   document.getElementById('tab-login').classList.toggle('active', mode==='login');
@@ -454,7 +463,6 @@ sb.auth.getSession().then(({ data }) => {
   if(data.session) onLoginSuccess(data.session.user);
 });
 
-// ── APP STATE ─────────────────────────────────────
 let workoutsCache = [];
 let measurementsCache = [];
 let photosCache = [];
@@ -478,21 +486,24 @@ function showPage(p) {
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
-  document.querySelectorAll('.nav-btn')[['workout','meals','progress','photos'].indexOf(p)].classList.add('active');
-  if(p==='progress') setTimeout(renderChart, 100);
+  
+  const idx = ['workout','meals','progress'].indexOf(p);
+  if(idx !== -1) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  
+  if(p==='progress') {
+    setTimeout(() => {
+      renderChart();
+      renderPhotos();
+    }, 100);
+  }
   if(p==='meals') renderMeals();
 }
 
-// ── WORKOUTS ──────────────────────────────────────
 async function loadWorkouts() {
   const { data: workouts, error } = await sb.from('workouts').select('*').order('date', {ascending:false});
-  if(error) { console.error(error); alert('Erreur chargement séances : ' + error.message); return; }
+  if(error) { console.error(error); return; }
   workoutsCache = (workouts || []).map(w => ({
-    id: w.id,
-    name: w.name,
-    cat: w.cat,
-    date: w.date,
-    exercises: Array.isArray(w.exercises) ? w.exercises : []
+    id: w.id, name: w.name, cat: w.cat, date: w.date, exercises: Array.isArray(w.exercises) ? w.exercises : []
   }));
   renderWorkouts();
 }
@@ -501,13 +512,13 @@ function renderWorkouts() {
   const list = document.getElementById('sessions-list');
   const filtered = activeCat === 'all' ? workoutsCache : workoutsCache.filter(w=>w.cat===activeCat);
   if(!filtered.length){
-    list.innerHTML = `<div class="empty-state"><div>🏋️</div><p>Aucune séance ${activeCat==='all'?'':'dans cette catégorie'}. Ajoute ta première !</p></div>`;
+    list.innerHTML = `<div class="empty-state"><div>🏋️</div><p>Aucune séance. Ajoute ta première !</p></div>`;
     return;
   }
   list.innerHTML = filtered.map(w=>`
     <div class="session-card" id="card-${w.id}">
       <div class="session-head" onclick="toggleDetail('${w.id}')">
-        <div class="cat-dot" style="background:${catColors[w.cat]};color:${catColors[w.cat]}"></div>
+        <div class="cat-dot" style="background:${catColors[w.cat]}"></div>
         <div class="session-info">
           <div class="session-name">${w.name}</div>
           <div class="session-meta">${fmtDate(w.date)} · ${w.exercises.length} exercice${w.exercises.length>1?'s':''}</div>
@@ -600,18 +611,13 @@ async function saveWorkout() {
   btn.disabled = true;
 
   const { error } = await sb.from('workouts').insert({
-    user_id: currentUser.id,
-    name,
-    cat,
-    date,
-    exercises: finalExercises
+    user_id: currentUser.id, name, cat, date, exercises: finalExercises
   });
 
   btn.disabled = false;
   if(error) { alert('Erreur : ' + error.message); return; }
   closeModal();
   await loadWorkouts();
-  updateMetrics();
 }
 
 // ── MEALS ─────────────────────────────────────────
@@ -661,7 +667,6 @@ function renderMeals() {
   const dayMeals = mealsCache.filter(m=>m.day===key);
   document.getElementById('meal-count-today').textContent = dayMeals.length;
 
-  // Streak calculation
   const dates = [...new Set(mealsCache.map(m=>m.day))].sort((a,b)=>new Date(b)-new Date(a));
   let streak = 0; let check = new Date();
   while(true) {
@@ -710,12 +715,8 @@ function openMealModal(type) {
   document.getElementById('meal-photo-text').style.display = 'block';
   document.getElementById('meal-photo-input').value = '';
   
-  // Définit automatiquement l'heure actuelle du système par défaut
   const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  document.getElementById('meal-time').value = `${hours}:${minutes}`;
-
+  document.getElementById('meal-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   document.getElementById('meal-modal').classList.add('open');
 }
 function closeMealModal() { document.getElementById('meal-modal').classList.remove('open'); }
@@ -737,20 +738,12 @@ function previewMealPhoto(input) {
 async function saveMeal() {
   const note = document.getElementById('meal-note').value.trim();
   const key = getMealDateKey();
-  
-  // Récupère l'heure entrée manuellement dans le formulaire
   const inputTime = document.getElementById('meal-time').value; 
-  
   const btn = document.getElementById('save-meal-btn');
   btn.disabled = true;
 
   const { error } = await sb.from('meals').insert({
-    user_id: currentUser.id,
-    day: key,
-    type: currentMealType,
-    note,
-    photo: mealPhotoData || '',
-    time: inputTime || '12:00'
+    user_id: currentUser.id, day: key, type: currentMealType, note, photo: mealPhotoData || '', time: inputTime || '12:00'
   });
 
   btn.disabled = false;
@@ -766,7 +759,7 @@ async function deleteMeal(id) {
   else await loadMeals();
 }
 
-// ── PROGRESS MEASUREMENTS ────────────────────────
+// ── PROGRESS & MEASUREMENTS ────────────────────────
 async function loadMeasurements() {
   const { data, error } = await sb.from('measurements').select('*').order('date', {ascending:true});
   if(error) { console.error(error); return; }
@@ -776,32 +769,39 @@ async function loadMeasurements() {
 function updateMetrics() {
   if(!measurementsCache.length) return;
   const last = measurementsCache[measurementsCache.length-1];
+  
   document.getElementById('cur-weight').textContent = last.weight ? last.weight + ' kg' : '—';
+  document.getElementById('cur-arms').textContent = last.arms ? last.arms + ' cm' : '—';
+  document.getElementById('cur-legs').textContent = last.legs ? last.legs + ' cm' : '—';
   document.getElementById('cur-waist').textContent = last.waist ? last.waist + ' cm' : '—';
   document.getElementById('cur-hips').textContent = last.hips ? last.hips + ' cm' : '—';
-  document.getElementById('sessions-count').textContent = workoutsCache.length;
+  document.getElementById('cur-chest').textContent = last.chest ? last.chest + ' cm' : '—';
 }
 
 async function addEntry() {
-  const weight = parseFloat(document.getElementById('inp-weight').value);
-  const waist = parseFloat(document.getElementById('inp-waist').value);
-  const hips = parseFloat(document.getElementById('inp-hips').value);
+  const weight = parseFloat(document.getElementById('inp-weight').value) || 0;
+  const arms = parseFloat(document.getElementById('inp-arms').value) || 0;
+  const legs = parseFloat(document.getElementById('inp-legs').value) || 0;
+  const waist = parseFloat(document.getElementById('inp-waist').value) || 0;
+  const hips = parseFloat(document.getElementById('inp-hips').value) || 0;
+  const chest = parseFloat(document.getElementById('inp-chest').value) || 0;
   const date = new Date().toISOString().split('T')[0];
 
-  if(!weight && !waist && !hips) return;
+  if(!weight && !arms && !legs && !waist && !hips && !chest) return;
 
   const { error } = await sb.from('measurements').insert({
-    user_id: currentUser.id,
-    date,
-    weight: weight || 0,
-    waist: waist || 0,
-    hips: hips || 0
+    user_id: currentUser.id, date, weight, arms, legs, waist, hips, chest
   });
 
   if(error) { alert(error.message); return; }
+  
   document.getElementById('inp-weight').value = '';
+  document.getElementById('inp-arms').value = '';
+  document.getElementById('inp-legs').value = '';
   document.getElementById('inp-waist').value = '';
   document.getElementById('inp-hips').value = '';
+  document.getElementById('inp-chest').value = '';
+  
   await loadMeasurements();
   updateMetrics();
   renderChart();
@@ -851,7 +851,6 @@ async function loadPhotos() {
   const { data, error } = await sb.from('photos').select('*').order('created_at', {ascending:false});
   if(error) { console.error(error); return; }
   photosCache = data || [];
-  renderPhotos();
 }
 
 async function addPhoto(input) {
@@ -860,13 +859,13 @@ async function addPhoto(input) {
   const reader = new FileReader();
   reader.onload = async function(e) {
     const { error } = await sb.from('photos').insert({
-      user_id: currentUser.id,
-      src: e.target.result,
-      date: new Date().toLocaleDateString('fr-FR'),
-      label
+      user_id: currentUser.id, src: e.target.result, date: new Date().toLocaleDateString('fr-FR'), label
     });
     if(error) alert(error.message);
-    else await loadPhotos();
+    else {
+      await loadPhotos();
+      renderPhotos();
+    }
   };
   reader.readAsDataURL(input.files[0]);
   input.value = '';
@@ -874,6 +873,7 @@ async function addPhoto(input) {
 
 function renderPhotos() {
   const grid = document.getElementById('photos-grid');
+  if(!grid) return;
   if(!photosCache.length){
     grid.innerHTML=`<div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:24px;text-align:center">Ajoute ta première photo de progression</div>`;
     return;
