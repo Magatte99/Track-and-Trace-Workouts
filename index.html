@@ -457,6 +457,7 @@ function onLoginSuccess(user) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   initApp();
+  requestNotificationPermission()
 }
 
 sb.auth.getSession().then(({ data }) => {
@@ -910,6 +911,35 @@ function setCompare(slot, input) {
   };
   reader.readAsDataURL(input.files[0]);
   input.value='';
+}
+  // Demande la permission pour les rappels de repas
+function requestNotificationPermission() {
+  if ("Notification" in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        console.log("Rappels de repas activés !");
+        // Lance la vérification automatique
+        scheduleMealReminder();
+      }
+    });
+  }
+}
+
+function scheduleMealReminder() {
+  setInterval(async () => {
+    const now = new Date();
+    if (now.getHours() === 21 && now.getMinutes() === 0) {
+      const todayKey = new Date().toISOString().split('T')[0];
+      const hasMealsToday = mealsCache.some(m => m.day === todayKey);
+      
+      if (!hasMealsToday && Notification.permission === "granted") {
+        new Notification("🍽️ Workout Progress", {
+          body: "Tu n'as pas encore enregistré tes repas aujourd'hui. Pense à noter tes calories !",
+          icon: "https://magatte99.github.io/Track-and-Trace-Workouts/favicon.ico"
+        });
+      }
+    }
+  }, 60000);
 }
 </script>
 </body>
